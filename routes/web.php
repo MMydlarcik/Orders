@@ -40,7 +40,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
          * Logout Routes
          */
         Route::get('/logout', 'LogoutController@perform')->name('logout.perform');
-        Route::get('/orders', 'orderListController@orderList')->name('home.orders');
-        Route::get('/users', 'userListController@userList')->name('home.users');
+        Route::get('/orders', 'OrderListController@orderList')->name('home.orders');
+        Route::get('/users', 'UserListController@userList')->name('home.users');
     });
 });
