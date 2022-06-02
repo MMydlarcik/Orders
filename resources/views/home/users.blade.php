@@ -17,9 +17,9 @@
             <tbody>
                 @foreach($users as $item)
                 <tr>
-                    <td>{{ $item->id }}</td>
-                    <td>{{ $item->username }}</td>
-                    <td>{{ $item->email }}</td>
+                    <td>{{ $item->getId() }}</td>
+                    <td>{{ $item->getUserName() }}</td>
+                    <td>{{ $item->getEmail() }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -27,9 +27,5 @@
     </div>
     @endauth
 
-    @guest
-    <h1>Homepage</h1>
-    <p class="lead">Your viewing the home page. Please login to view the restricted data.</p>
-    @endguest
 </div>
 @endsection
