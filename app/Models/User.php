@@ -53,4 +53,16 @@ class User extends Authenticatable
     {
         $this->attributes['password'] = bcrypt($value);
     }
+
+    public function getId(){
+        return $this->id;
+    }
+
+    public function getUserName(){
+        return $this->username;
+    }
+
+    public function getEmail(){
+        return $this->email;
+    }
 }
