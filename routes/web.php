@@ -42,16 +42,28 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         /**
          * Order Routes
          */
-        Route::post('/orders/create', 'OrderListController@store')->name('orders.store');
-        Route::get('/orders/create', 'OrderListController@create')->name('orders.create');
-        Route::post('/orders/destroy', 'OrderListController@destroy')->name('orders.destroy');
-        Route::get('/orders/{id}/edit', 'OrderListController@edit')->name('orders.edit');
-        Route::post('/orders/update', 'OrderListController@update')->name('orders.update');
-        Route::get('/orders/{id}', 'OrderListController@order')->name('orders.order');
-        Route::get('/orders', 'OrderListController@orderList')->name('orders.orders');
+        Route::post('/orders/create', 'OrderController@store')->name('orders.store');
+        Route::get('/orders/create', 'OrderController@create')->name('orders.create');
+        Route::post('/orders/destroy', 'OrderController@destroy')->name('orders.destroy');
+        Route::get('/orders/{id}/edit', 'OrderController@edit')->name('orders.edit');
+        Route::post('/orders/update', 'OrderController@update')->name('orders.update');
+        Route::get('/orders/{id}', 'OrderController@order')->name('orders.order');
+        Route::get('/orders', 'OrderController@orderList')->name('orders.orders');
+        Route::post('/orders/create', 'OrderController@storeItem')->name('orders.storeItem');
+        Route::post('/orders/editItem', 'OrderController@editItem')->name('orders.editItem');
+        Route::post('/orders/editHistoryItem', 'OrderController@editHistoryItem')->name('orders.editHistoryItem');
+        Route::post('/orders/createHistory', 'OrderController@storeHistory')->name('orders.storeHistory');
         /**
          * User Routes
          */
-        Route::get('/users', 'UserListController@userList')->name('users.users');
+        Route::get('/users', 'UserController@userList')->name('users.users');
+        Route::get('/users/{id}', 'UserController@user')->where('id', '[0-9]+')->name('users.user');
+        Route::post('/users/destroy', 'UserController@destroy')->name('users.destroy');
+        Route::get('/users/{id}/edit', 'UserController@edit')->name('users.edit');
+        Route::post('/users/update', 'UserController@update')->name('users.update');
+        Route::post('/users/updatePassword', 'UserController@updatePassword')->name('users.updatePassword');
+        Route::get('/users/create', 'UserController@create')->name('users.create');
+        Route::post('/users/create', 'UserController@store')->name('users.store');
+    
     });
 });
