@@ -6,7 +6,9 @@ use App\Models\Order;
 use App\Models\OrderHistory;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
-
+use App\Http\Requests\OrderItemRequest;
+use App\Http\Requests\OrderRequest;
+use App\Http\Requests\HistoryRequest;
 
 class OrderController extends Controller
 {
@@ -23,26 +25,22 @@ class OrderController extends Controller
         return view('orders.create');
     }
 
-    public function store(Request $request)
+    public function store(OrderRequest $request)
     {
-        $validated = $request->validate([
-            'code' => 'required|integer',
-            'author_id' => 'required',
-        ]);
+        Order::create($request->validated());
 
-        $code = $request->input('code');
-        $author_id = $request->input('author_id');
-
-
+        /*
         Order::create([
             'code' => $code,
             'author_id' => $author_id
-        ]);
+            ]);
+        */
         return redirect(route('orders.orders'))->with('success', __('order.create_success'));
     }
 
-    public function storeItem(Request $request)
+    public function storeItem(OrderItemRequest $request)
     {
+        /*
         $validated = $request->validate([
             'code' => 'required|integer',
             'qty' => 'required|numeric',
@@ -58,11 +56,17 @@ class OrderController extends Controller
             'code' => $code,
             'qty' => $qty
         ]);
+        */
+
+        $orderId = $request->input('order_id');
+        OrderItem::create($request->validated());
+
         return redirect(route('orders.order', $orderId));
     }
 
-    public function storeHistory(Request $request)
+    public function storeHistory(HistoryRequest $request)
     {
+        /*
         $validated = $request->validate([
             'action' => 'required',
             'user_id' => 'required|integer',
@@ -77,6 +81,10 @@ class OrderController extends Controller
             'action' => $action,
             'user_id' => $userId
         ]);
+        */
+        $orderId = $request->input('order_id');
+        OrderHistory::create($request->validated());
+
         return redirect(route('orders.order', $orderId));
     }
 
@@ -98,8 +106,9 @@ class OrderController extends Controller
         return redirect(route('orders.orders'))->with('success', __('order.destroy_success'));
     }
 
-    public function editItem(Request $request)
+    public function editItem(OrderItemRequest $request)
     {
+        /*
         $orderId = $request->input('order_id');
         $itemId = $request->input('item_id');
         $action = $request->input('action');
@@ -108,7 +117,6 @@ class OrderController extends Controller
 
         if ($action == 'Delete') {
             OrderItem::destroy($itemId);
-            
         } elseif ($action == 'Edit') {
             $order = OrderItem::find($itemId);
             $order->update([
@@ -116,11 +124,30 @@ class OrderController extends Controller
                 'qty' => $qty
             ]);
         }
+        */
+        $orderId = $request->input('order_id');
+        $itemId = $request->input('item_id');
+        $action = $request->input('action');
+        $code = $request->input('code');
+        $qty = $request->input('qty');
+
+        if ($action == 'Delete') {
+            OrderItem::destroy($itemId);
+        } elseif ($action == 'Edit') {
+            $order = OrderItem::find($itemId);
+            if ($request->validated()) {
+                $order->update([
+                    'code' => $code,
+                    'qty' => $qty
+                ]);
+            }
+        }
         return redirect(route('orders.order', $orderId));
     }
 
-    public function editHistoryItem(Request $request)
+    public function editHistoryItem(HistoryRequest $request)
     {
+        /*
         $orderId = $request->input('order_id');
         $itemId = $request->input('item_id');
         $action = $request->input('action');
@@ -129,13 +156,30 @@ class OrderController extends Controller
 
         if ($action == 'Delete') {
             OrderHistory::destroy($itemId);
-            
         } elseif ($action == 'Edit') {
             $history = OrderHistory::find($itemId);
             $history->update([
                 'action' => $historyAction,
                 'user_id' => $userId
             ]);
+        }
+        */
+        $orderId = $request->input('order_id');
+        $itemId = $request->input('item_id');
+        $action = $request->input('action');
+        $historyAction = $request->input('history_action');
+        $userId = $request->input('user_id');
+
+        if ($action == 'Delete') {
+            OrderHistory::destroy($itemId);
+        } elseif ($action == 'Edit') {
+            $history = OrderHistory::find($itemId);
+            if ($request->validated()) {
+                $history->update([
+                    'action' => $historyAction,
+                    'user_id' => $userId
+                ]);
+            }
         }
         return redirect(route('orders.order', $orderId));
     }
@@ -146,8 +190,9 @@ class OrderController extends Controller
         return view('orders.edit')->with('order', $order);
     }
 
-    public function update(Request $request)
+    public function update(OrderRequest $request)
     {
+        /*
         $id = $request->input('id');
         $code = $request->input('code');
         $author_id = $request->input('author_id');
@@ -157,6 +202,18 @@ class OrderController extends Controller
             'code' => $code,
             'author_id' => $author_id
         ]);
+        */
+        $id = $request->input('id');
+        $code = $request->input('code');
+        $author_id = $request->input('author_id');
+
+        $order = Order::find($id);
+        if ($request->validated()) {
+            $order->update([
+                'code' => $code,
+                'author_id' => $author_id
+            ]);
+        }
         return redirect(route('orders.orders'));
     }
 }
