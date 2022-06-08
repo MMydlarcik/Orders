@@ -4,15 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserRequest;
+use App\Http\Requests\PasswordRequest;
 
 class UserController extends Controller
 {
-    public function userList() 
+    public function userList()
     {
         $users = User::all();
         return view('users.users')->with([
-            'users'=> $users
+            'users' => $users
         ]);
     }
 
@@ -36,8 +37,9 @@ class UserController extends Controller
     }
 
 
-    public function update(Request $request)
-    {   
+    public function update(UserRequest $request)
+    {
+        /*
         $id = $request->input('id');
         $username = $request->input('username');
         $email = $request->input('email');
@@ -47,17 +49,40 @@ class UserController extends Controller
             'username' => $username,
             'email' => $email
         ]);
+        */
+
+        $id = $request->input('id');
+        $username = $request->input('username');
+        $email = $request->input('email');
+
+        $user = User::find($id);
+        if ($request->validated()) {
+            $user->update([
+                'username' => $username,
+                'email' => $email
+            ]);
+        }
         return redirect(route('users.users'));
     }
 
-    public function updatePassword(Request $request)
-    {   
+    public function updatePassword(PasswordRequest $request)
+    {
+        /*
         $id = $request->input('id');
         $password = $request->input('password');
         $user = User::find($id);
         $user->update([
             'password' => $password
         ]);
+        */
+        $id = $request->input('id');
+        $password = $request->input('password');
+        $user = User::find($id);
+        if ($request->validated()) {
+            $user->update([
+                'password' => $password
+            ]);
+        }
         return redirect(route('users.users'));
     }
 
