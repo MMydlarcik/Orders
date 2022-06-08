@@ -34,6 +34,7 @@ class LoginController extends Controller
                 ->withErrors(trans('auth.failed'));
         endif;
 
+       
         $user = Auth::getProvider()->retrieveByCredentials($credentials);
 
         Auth::login($user);
