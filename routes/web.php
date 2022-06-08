@@ -42,7 +42,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         /**
          * Order Routes
          */
-        Route::post('/orders/create', 'OrderController@store')->name('orders.store');
+        Route::post('/orders/store', 'OrderController@store')->name('orders.store');
         Route::get('/orders/create', 'OrderController@create')->name('orders.create');
         Route::post('/orders/destroy', 'OrderController@destroy')->name('orders.destroy');
         Route::get('/orders/{id}/edit', 'OrderController@edit')->name('orders.edit');
