@@ -77,7 +77,10 @@
       {!! csrf_field() !!}
       <input type="hidden" name="order_id" id="order_id" value="{{ $order->getId() }}" id="id" />
       <input type="hidden" name="item_id" id="item_id" value="{{ $item->id }}" id="id" />
-      <div class="form-group col-7">
+      <div class="form-group col-1">
+        <input type="text" name="item_id2" id="item_id2" class="form-control" placeholder="Item ID" value="{{ $item->id }}"></br>
+      </div>
+      <div class="form-group col-6">
         <input type="text" name="history_action" id="history_action" class="form-control" placeholder="Action" value="{{ $item->action }}"></br>
       </div>
       <div class="form-group col-3">
@@ -99,7 +102,12 @@
         <input type="text" name="action" id="action" class="form-control" placeholder="Action"></br>
       </div>
       <div class="form-group col-3">
-        <input type="text" name="user_id" id="user_id" class="form-control" placeholder="User ID"></br>
+        <select class="form-select form-select-md mb-3" aria-label=".form-select-lg example">
+            <option selected>{{auth()->user()->id}}</option>
+          @foreach($users as $user)
+            <option value=" {{ $user->id }} ">{{ $user->id }} </option>
+          @endforeach
+        </select>
       </div>
       <div class="form-group col-2">
         <input type="submit" value="+" class="btn btn-success"></br>
