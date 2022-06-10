@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('order_history', function (Blueprint $table) {
-            $table->string('note');
+            $table->string('note')->nullable();
         });
     }
 
