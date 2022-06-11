@@ -54,12 +54,14 @@ class UserController extends Controller
         $id = $request->input('id');
         $username = $request->input('username');
         $email = $request->input('email');
+        $role = $request->input('role');
 
         $user = User::find($id);
         if ($request->validated()) {
             $user->update([
                 'username' => $username,
-                'email' => $email
+                'email' => $email,
+                'role' => $role
             ]);
         }
         return redirect(route('users.users'));
@@ -96,17 +98,20 @@ class UserController extends Controller
         $validated = $request->validate([
             'username' => 'required',
             'email' => 'required',
+            'role' => 'required',
             'password' => 'required',
         ]);
 
         $username = $request->input('username');
         $email = $request->input('email');
+        $role = $request->input('role');
         $password = $request->input('password');
 
 
         User::create([
             'username' => $username,
             'email' => $email,
+            'role' => $role,
             'password' => $password,
         ]);
         return redirect(route('users.users'))->with('success', 'Success');
