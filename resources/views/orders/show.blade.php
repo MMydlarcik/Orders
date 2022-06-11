@@ -11,6 +11,7 @@
             </div>
 
             <hr>
+            @if (Auth::user()->role == 'admin')
             <form method="POST" action="{{ route('orders.destroy') }}" accept-charset="UTF-8" style="display:inline">
                 {{ csrf_field() }}
                 <input type="hidden" name='id' value="{{ $order->getId() }}">
@@ -21,6 +22,7 @@
             <a href="{{ route('orders.edit', ['id' => $order->getId()]) }}" title="Edit Order">
                 <button class="btn btn-primary btn-sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>
             </a>
+            @endif
 
         </div>
     </div>
