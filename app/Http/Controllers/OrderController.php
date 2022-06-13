@@ -13,6 +13,14 @@ use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Requests\HistoryCreateRequest;
 use App\Http\Requests\HistoryUpdateRequest;
 use App\Models\User;
+use App\Services\HistoryStoreService;
+use App\Services\OrderUpdateService;
+use App\Services\HistoryUpdateService;
+use App\Services\OrderItemEditService;
+use App\Services\OrderItemStoreService;
+use App\Services\OrderStoreService;
+
+use function PHPUnit\Framework\returnSelf;
 
 class OrderController extends Controller
 {
@@ -26,7 +34,12 @@ class OrderController extends Controller
 
     public function create()
     {
-        return view('orders.create');
+        if (auth()->user()->role == 'admin') {
+            $users = User::all();
+            return view('orders.create')->with([
+                'users' => $users
+            ]);
+        } else return redirect(route('orders.orders'));
     }
 
     public function store(OrderCreateRequest $request)
@@ -34,53 +47,41 @@ class OrderController extends Controller
         $validated = $request->validated();
         $code = $validated['code'];
         $authorId = $validated['author_id'];
-        Order::create([
-            'code' => $code,
-            'author_id' => $authorId
-        ]);
-
-        /*
-        Order::create([
-            'code' => $code,
-            'author_id' => $author_id
-            ]);
-        */
+        if (auth()->user()->role == 'admin') {
+            $service = new OrderStoreService;
+            $order = $service->processRequest($request);
+        } else return redirect(route('orders.orders'));
         return redirect(route('orders.orders'))->with('success', __('order.create_success'));
     }
 
     public function storeItem(OrderItemCreateRequest $request)
     {
         $validated = $request->validated();
+        $orderId = $validated['order_id'];
 
-        $orderId =$validated['order_id'];
-        $code = $validated['code'];
-        $qty = $validated['qty'];
-
-        OrderItem::create([
-            'order_id' => $orderId,
-            'code' => $code,
-            'qty' => $qty
-        ]);
-        return redirect(route('orders.order', $orderId));
+        if (auth()->user()->role == 'admin') {
+            $service = new OrderItemStoreService;
+            $orderItem = $service->processRequest($request);
+            return redirect(route('orders.order', $orderId));
+        } else return redirect(route('orders.orders'));
     }
 
     public function storeHistory(HistoryCreateRequest $request)
     {
         $validated = $request->validated();
         $orderId = $validated['order_id'];
-        $action = $validated['action'];
-        $userId = $validated['user_id'];;
 
-        OrderHistory::create([
-            'action' => $action,
-            'user_id' => $userId
-        ]);
-        return redirect(route('orders.order', $orderId));
+        if (auth()->user()->role == 'admin') {
+            $service = new HistoryStoreService;
+            $history = $service->processRequest($request);
+            return redirect(route('orders.order', $orderId));
+        } else return redirect(route('orders.orders'));
     }
 
     public function order($id)
     {
-        $orderItems = OrderItem::all();
+        //$orderItems = OrderItem::all();
+        $orderItems = OrderItem::where('order_id', '=', $id)->get();
         $historyItems = OrderHistory::all();
         $users = User::all();
         $order = Order::find($id);
@@ -94,29 +95,14 @@ class OrderController extends Controller
     public function destroy(Request $request)
     {
         $id = $request->input('id');
-        Order::destroy($id);
-        return redirect(route('orders.orders'))->with('success', __('order.destroy_success'));
+        if (auth()->user()->role == 'admin') {
+            Order::destroy($id);
+            return redirect(route('orders.orders'))->with('success', __('order.destroy_success'));
+        } else return redirect(route('orders.orders'));
     }
 
     public function editItem(OrderItemUpdateRequest $request)
     {
-        /*
-        $orderId = $request->input('order_id');
-        $itemId = $request->input('item_id');
-        $action = $request->input('action');
-        $code = $request->input('code');
-        $qty = $request->input('qty');
-
-        if ($action == 'Delete') {
-            OrderItem::destroy($itemId);
-        } elseif ($action == 'Edit') {
-            $order = OrderItem::find($itemId);
-            $order->update([
-                'code' => $code,
-                'qty' => $qty
-            ]);
-        }
-        */
         /*
         $orderId = $request->input('order_id');
         $itemId = $request->input('item_id');
@@ -138,23 +124,12 @@ class OrderController extends Controller
         */
         $validated = $request->validated();
         $orderId = $validated['order_id'];
-        $itemId = $validated['item_id'];
-        $action =$validated['action'];
-        $code = $validated['code'];
-        $qty = $validated['qty'];
 
-        if ($action == 'Delete') {
-            OrderItem::destroy($itemId);
-        } elseif ($action == 'Edit') {
-            $orderItem = OrderItem::find($itemId);
-            if ($validated) {
-                $orderItem->update([
-                    'code' => $code,
-                    'qty' => $qty
-                ]);
-            }
-        }
-        return redirect(route('orders.order', $orderId));
+        if (auth()->user()->role == 'admin') {
+            $service = new OrderItemEditService;
+            $orderItem = $service->processRequest($request);
+            return redirect(route('orders.order', $orderId));
+        } else return redirect(route('orders.orders'));
     }
 
     public function editHistoryItem(HistoryUpdateRequest $request)
@@ -178,31 +153,20 @@ class OrderController extends Controller
         */
         $validated = $request->validated();
         $orderId = $validated['order_id'];
-        $itemId = $validated['item_id'];
-        $action = $validated['action'];
-        $historyAction = $validated['history_action'];
-        $userId = $validated['user_id'];
 
-
-        if ($action == 'Delete') {
-            OrderHistory::destroy($itemId);
-        } elseif ($action == 'Edit') {
-            $history = OrderHistory::find($itemId);
-            $validated = $request->validated();
-            if ($validated) {
-                $history->update([
-                    'action' => $historyAction,
-                    'user_id' => $userId
-                ]);
-            }
-        }
-        return redirect(route('orders.order', $orderId));
+        if (auth()->user()->role == 'admin') {
+            $service = new HistoryUpdateService;
+            $history = $service->processRequest($request);
+            return redirect(route('orders.order', $orderId));
+        } else return redirect(route('orders.orders'));
     }
 
     public function edit($id)
     {
-        $order = Order::find($id);
-        return view('orders.edit')->with('order', $order);
+        if (auth()->user()->role == 'admin') {
+            $order = Order::find($id);
+            return view('orders.edit')->with('order', $order);
+        } else return redirect(route('orders.orders'));
     }
 
     public function update(OrderUpdateRequest $request)
@@ -231,17 +195,16 @@ class OrderController extends Controller
             ]);
         }
         */
+        /*
         $validated = $request->validated();
         $id = $validated['id'];
         $code = $validated['code'];
         $authorId = $validated['author_id'];
         $order = Order::find($id);
-        
-        if ($validated) {
-            $order->update([
-                'code' => $code,
-                'author_id' => $authorId
-            ]);
+        */
+        if (auth()->user()->role == 'admin') {
+            $service = new OrderUpdateService;
+            $order = $service->processRequest($request);
         }
         return redirect(route('orders.orders'));
     }
