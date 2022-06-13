@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\PasswordRequest;
+use App\Services\PasswordUpdateService;
+use App\Services\UserStoreService;
+use App\Services\UserUpdateService;
 
 class UserController extends Controller
 {
@@ -25,15 +28,19 @@ class UserController extends Controller
 
     public function destroy(Request $request)
     {
-        $id = $request->input('id');
-        User::destroy($id);
-        return redirect(route('users.users'))->with('success', 'Success');
+        if (auth()->user()->role == 'admin') {
+            $id = $request->input('id');
+            User::destroy($id);
+            return redirect(route('users.users'))->with('success', 'Success');
+        } else return redirect(route('users.users'));
     }
 
     public function edit($id)
     {
-        $user = User::find($id);
-        return view('users.edit')->with('user', $user);
+        if (auth()->user()->role == 'admin') {
+            $user = User::find($id);
+            return view('users.edit')->with('user', $user);
+        } else return redirect(route('users.users'));
     }
 
 
@@ -50,24 +57,20 @@ class UserController extends Controller
             'email' => $email
         ]);
         */
-
+        /*
         $id = $request->input('id');
         $username = $request->input('username');
         $email = $request->input('email');
         $role = $request->input('role');
-
-        $user = User::find($id);
-        if ($request->validated()) {
-            $user->update([
-                'username' => $username,
-                'email' => $email,
-                'role' => $role
-            ]);
+        */
+        if (auth()->user()->role == 'admin') {
+            $user = new UserUpdateService;
+            $user->processRequest($request);
         }
         return redirect(route('users.users'));
     }
 
-    public function updatePassword(PasswordRequest $request)
+    public function updatePassword(Request $request)
     {
         /*
         $id = $request->input('id');
@@ -77,13 +80,14 @@ class UserController extends Controller
             'password' => $password
         ]);
         */
+        /*
         $id = $request->input('id');
         $password = $request->input('password');
         $user = User::find($id);
-        if ($request->validated()) {
-            $user->update([
-                'password' => $password
-            ]);
+        */
+        if (auth()->user()->role === 'admin') {
+            $service = new PasswordUpdateService;
+            $service->processRequest($request);
         }
         return redirect(route('users.users'));
     }
@@ -102,18 +106,10 @@ class UserController extends Controller
             'password' => 'required',
         ]);
 
-        $username = $request->input('username');
-        $email = $request->input('email');
-        $role = $request->input('role');
-        $password = $request->input('password');
-
-
-        User::create([
-            'username' => $username,
-            'email' => $email,
-            'role' => $role,
-            'password' => $password,
-        ]);
-        return redirect(route('users.users'))->with('success', 'Success');
+        if (auth()->user()->role === 'admin') {
+            $service = new UserStoreService;
+            $user = $service->processRequest($request);
+            return redirect(route('users.users'))->with('success', 'Success');
+        } else return redirect(route('users.users'));
     }
 }
