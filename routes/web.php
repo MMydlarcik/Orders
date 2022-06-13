@@ -31,10 +31,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
          */
         Route::get('/login', 'LoginController@show')->name('login.show');
         Route::post('/login', 'LoginController@login')->name('login.perform');
-        
     });
 
-    Route::group(['middleware' => ['auth']], function () {
+    Route::group(['middleware' => ['auth', 'prevent-back-history']], function () {
         /**
          * Logout Routes
          */
@@ -64,6 +63,5 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/users/updatePassword', 'UserController@updatePassword')->name('users.updatePassword');
         Route::get('/users/create', 'UserController@create')->name('users.create');
         Route::post('/users/create', 'UserController@store')->name('users.store');
-    
     });
 });
