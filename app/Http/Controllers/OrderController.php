@@ -81,10 +81,14 @@ class OrderController extends Controller
     public function order($id)
     {
         //$orderItems = OrderItem::all();
-        $orderItems = OrderItem::where('order_id', '=', $id)->get();
-        $historyItems = OrderHistory::all();
+        //$orderItems = OrderItem::where('order_id', '=', $id)->get();
+        //$historyItems = OrderHistory::all();
         $users = User::all();
         $order = Order::find($id);
+
+        $orderItems = $order->orderItems;
+        $historyItems = $order->historyItems;
+
         return view('orders.show')
             ->with('order', $order)
             ->with('orderItems', $orderItems)
