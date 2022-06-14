@@ -24,7 +24,7 @@
                             <tr>
                                 <td>{{ $item->getId() }}</td>
                                 <td>{{ $item->getCode() }}</td>
-                                <td>{{ $item->getAuthorId() }}</td>
+                                <td>{{ $item->author != null ? $item->author->getUserName() : '' }}</td>
                                 <td>
                                     <a href="{{ route('orders.order', ['id' => $item->getId()]) }}"
                                         title="View Order"><button class="btn btn-info btn-sm"><i class="fa fa-eye"
