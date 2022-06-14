@@ -13,7 +13,7 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     @foreach($lastOrders as $order)
-                    <li class="list-group-item">{{ $order->getCode() }}</li>
+                    <a href='{{ route('orders.order', ['id' => $order->getId()]) }}'><li class="list-group-item">{{ $order->getCode() }}</li></a>
                     @endforeach
                 </ul>
             </div>
@@ -22,12 +22,12 @@
         <div class="col-6">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">XX</h5>
+                    <h5 class="card-title">Nejnovější uživatelé</h5>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Cras justo odio</li>
-                    <li class="list-group-item">Dapibus ac facilisis in</li>
-                    <li class="list-group-item">Vestibulum at eros</li>
+                    @foreach($lastUsers as $user)
+                    <a href='{{ route('users.user', ['id' => $user->getId()]) }}'><li class="list-group-item">{{ $user->username }}</li></a>
+                    @endforeach
                 </ul>
             </div>
         </div>
