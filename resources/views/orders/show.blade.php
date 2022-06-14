@@ -12,16 +12,17 @@
 
             <hr>
             @if (Auth::user()->role == 'admin')
-            <form method="POST" action="{{ route('orders.destroy') }}" accept-charset="UTF-8" style="display:inline">
-                {{ csrf_field() }}
-                <input type="hidden" name='id' value="{{ $order->getId() }}">
-                <button type="submit" class="btn btn-danger btn-sm" title="Delete Order"
-                    onclick="return confirm('Confirm delete')"><i class="fa fa-trash-o" aria-hidden="true"></i>
-                    Delete</button>
-            </form>
-            <a href="{{ route('orders.edit', ['id' => $order->getId()]) }}" title="Edit Order">
-                <button class="btn btn-primary btn-sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button>
-            </a>
+                <form method="POST" action="{{ route('orders.destroy') }}" accept-charset="UTF-8" style="display:inline">
+                    {{ csrf_field() }}
+                    <input type="hidden" name='id' value="{{ $order->getId() }}">
+                    <button type="submit" class="btn btn-danger btn-sm" title="Delete Order"
+                        onclick="return confirm('Confirm delete')"><i class="fa fa-trash-o" aria-hidden="true"></i>
+                        Delete</button>
+                </form>
+                <a href="{{ route('orders.edit', ['id' => $order->getId()]) }}" title="Edit Order">
+                    <button class="btn btn-primary btn-sm"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        Edit</button>
+                </a>
             @endif
 
         </div>
@@ -44,31 +45,34 @@
                         <input type="text" name="qty" id="qty" class="form-control" placeholder="Qty"
                             value="{{ $item->qty }}"></br>
                     </div>
-                    <div class="form-group col-1">
-                        <input type="submit" name='action' value="Edit" class="btn btn-success"></br>
-                    </div>
-                    <div class="form-group col-1">
-                        <input type="submit" name='action' value="Delete" class="btn btn-danger"
-                            onclick="return confirm('Confirm delete')"></br>
-                    </div>
+                    @if (Auth::user()->role == 'admin')
+                        <div class="form-group col-1">
+                            <input type="submit" name='action' value="Edit" class="btn btn-success"></br>
+                        </div>
+                        <div class="form-group col-1">
+                            <input type="submit" name='action' value="Delete" class="btn btn-danger"
+                                onclick="return confirm('Confirm delete')"></br>
+                        </div>
+                    @endif
                 </form>
             @endforeach
 
             <hr>
-
-            <form action="{{ route('orders.storeItem') }}" method="post" class="row">
-                {!! csrf_field() !!}
-                <input type="hidden" name="order_id" id="order_id" value="{{ $order->getId() }}" id="id" />
-                <div class="form-group col-7">
-                    <input type="text" name="code" id="code" class="form-control" placeholder="Code"></br>
-                </div>
-                <div class="form-group col-3">
-                    <input type="text" name="qty" id="qty" class="form-control" placeholder="Qty"></br>
-                </div>
-                <div class="form-group col-2">
-                    <input type="submit" value="+" class="btn btn-success"></br>
-                </div>
-            </form>
+            @if (Auth::user()->role == 'admin')
+                <form action="{{ route('orders.storeItem') }}" method="post" class="row">
+                    {!! csrf_field() !!}
+                    <input type="hidden" name="order_id" id="order_id" value="{{ $order->getId() }}" id="id" />
+                    <div class="form-group col-7">
+                        <input type="text" name="code" id="code" class="form-control" placeholder="Code"></br>
+                    </div>
+                    <div class="form-group col-3">
+                        <input type="text" name="qty" id="qty" class="form-control" placeholder="Qty"></br>
+                    </div>
+                    <div class="form-group col-2">
+                        <input type="submit" value="+" class="btn btn-success"></br>
+                    </div>
+                </form>
+            @endif
 
         </div>
     </div>
@@ -93,38 +97,47 @@
                             placeholder="Action" value="{{ $item->action }}"></br>
                     </div>
                     <div class="form-group col-3">
-                        <input type="text" name="user_id" id="user_id" class="form-control" placeholder="User ID"
-                            value="{{ $item->user_id }}"></br>
+                        <select name="user_id" id="user_id" class="form-select form-select-md mb-3"
+                            aria-label=".form-select-lg example">
+                            @foreach ($users as $user)
+                                <option {{ $item->user_id === $user->id ? 'selected' : '' }}
+                                    value=" {{ $user->id }} ">{{ $user->username }} </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <div class="form-group col-1">
-                        <input type="submit" name='action' value="Edit" class="btn btn-success"></br>
-                    </div>
-                    <div class="form-group col-1">
-                        <input type="submit" name='action' value="Delete" class="btn btn-danger"
-                            onclick="return confirm('Confirm delete')"></br>
-                    </div>
+                    @if (Auth::user()->role == 'admin')
+                        <div class="form-group col-1">
+                            <input type="submit" name='action' value="Edit" class="btn btn-success"></br>
+                        </div>
+                        <div class="form-group col-1">
+                            <input type="submit" name='action' value="Delete" class="btn btn-danger"
+                                onclick="return confirm('Confirm delete')"></br>
+                        </div>
+                    @endif
                 </form>
             @endforeach
 
-            <form action="{{ route('orders.storeHistory') }}" method="post" class="row">
-                {!! csrf_field() !!}
-                <input type="hidden" name="order_id" id="order_id" value="{{ $order->getId() }}" id="id" />
-                <div class="form-group col-7">
-                    <input type="text" name="action" id="action" class="form-control" placeholder="Action"></br>
-                </div>
-                <div class="form-group col-3">
-                    <select name="user_id" id="user_id" class="form-select form-select-md mb-3" aria-label=".form-select-lg example">
-                        <option selected>{{ auth()->user()->id }}</option>
-                        @foreach ($users as $user)
-                            <option value=" {{ $user->id }} ">{{ $user->id }} </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group col-2">
-                    <input type="submit" value="+" class="btn btn-success"></br>
-                </div>
-            </form>
-
+            @if (Auth::user()->role == 'admin')
+                <form action="{{ route('orders.storeHistory') }}" method="post" class="row">
+                    {!! csrf_field() !!}
+                    <input type="hidden" name="order_id" id="order_id" value="{{ $order->getId() }}" id="id" />
+                    <div class="form-group col-7">
+                        <input type="text" name="action" id="action" class="form-control" placeholder="Action"></br>
+                    </div>
+                    <div class="form-group col-3">
+                        <select name="user_id" id="user_id" class="form-select form-select-md mb-3"
+                            aria-label=".form-select-lg example">
+                            @foreach ($users as $user)
+                                <option {{ auth()->user()->id == $user->id ? 'selected' : '' }}
+                                    value=" {{ $user->id }} ">{{ $user->username }} </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group col-2">
+                        <input type="submit" value="+" class="btn btn-success"></br>
+                    </div>
+                </form>
+            @endif
         </div>
     </div>
 @endsection
