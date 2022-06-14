@@ -11,5 +11,5 @@ class OrderHistory extends Model
 
     protected $table = 'order_history';
     protected $primaryKey = 'id';
-    protected $fillable = ['action','user_id'];
+    protected $fillable = ['order_id','action','user_id'];
 }
