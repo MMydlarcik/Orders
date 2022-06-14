@@ -15,12 +15,14 @@ class HistoryStoreService
 
     public function process($validated)
     {
+        $orderId = $validated['order_id'];
         $action = $validated['action'];
         $userId = $validated['user_id'];;
 
         return OrderHistory::create([
             'action' => $action,
-            'user_id' => $userId
+            'user_id' => $userId,
+            'order_id' => $orderId
         ]);
     }
 }
