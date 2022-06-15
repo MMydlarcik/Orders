@@ -10,23 +10,24 @@ class HistoryUpdateService
     public function processRequest(HistoryUpdateRequest $request)
     {
         $validated = $request->validated();
-        return $this->process($validated);
+        $array = [
+            'item_id' => $validated['item_id'],
+            'action' => $validated['action'],
+            'history_action' => $validated['history_action'],
+            'user_id' => $validated['user_id']
+        ];
+        return $this->process($array);
     }
 
-    public function process($validated)
+    public function process($array)
     {
-        $itemId = $validated['item_id'];
-        $action = $validated['action'];
-        $historyAction = $validated['history_action'];
-        $userId = $validated['user_id'];
-
-        if ($action === 'Delete') {
-            return OrderHistory::destroy($itemId);
-        } elseif ($action === 'Edit') {
-            $history = OrderHistory::find($itemId);
+        if ($array['action'] === 'Delete') {
+            return OrderHistory::destroy($array['item_id']);
+        } elseif ($array['action'] === 'Edit') {
+            $history = OrderHistory::find($array['item_id']);
             return $history->update([
-                'action' => $historyAction,
-                'user_id' => $userId
+                'action' => $array['history_action'],
+                'user_id' => $array['user_id']
             ]);
         }
     }
