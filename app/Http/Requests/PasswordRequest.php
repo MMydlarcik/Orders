@@ -24,6 +24,7 @@ class PasswordRequest extends FormRequest
     public function rules()
     {
         return [
+            'id' => 'required|integer',
             'password' => 'required|min:8',
         ];
     }
