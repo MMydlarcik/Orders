@@ -212,4 +212,16 @@ class OrderController extends Controller
         }
         return redirect(route('orders.orders'));
     }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $order = Order::where('code', $search)->first();
+        if ($order) {
+            $id = $order->id;
+            return redirect(route('orders.order', ['id' => $id]));
+        } else {
+            return redirect(route('orders.orders'));
+        }
+    }
 }
