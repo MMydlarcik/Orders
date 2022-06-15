@@ -10,24 +10,22 @@ class OrderItemEditService
     public function processRequest(OrderItemUpdateRequest $request)
     {
         $validated = $request->validated();
-        return $this->process($validated);
+        $array = [
+            'item_id' => $validated['item_id'],
+            'action' => $validated['action'],
+            'code' => $validated['code'],
+            'qty' => $validated['qty']
+        ];
+        return $this->process($array);
     }
 
-    public function process($validated)
+    public function process($array)
     {
-        $itemId = $validated['item_id'];
-        $action = $validated['action'];
-        $code = $validated['code'];
-        $qty = $validated['qty'];
-
-        if ($action == 'Delete') {
-            return OrderItem::destroy($itemId);
-        } elseif ($action == 'Edit') {
-            $orderItem = OrderItem::find($itemId);
-            return $orderItem->update([
-                'code' => $code,
-                'qty' => $qty
-            ]);
+        if ($array['action'] == 'Delete') {
+            return OrderItem::destroy($array['item_id']);
+        } elseif ($array['action'] == 'Edit') {
+            $orderItem = OrderItem::find($array['item_id']);
+            return $orderItem->update($array);
         }
     }
 }
