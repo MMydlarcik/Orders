@@ -10,19 +10,16 @@ class OrderItemStoreService
     public function processRequest(OrderItemCreateRequest $request)
     {
         $validated = $request->validated();
-        return $this->process($validated);
+        $array = [
+            'order_id' => $validated['order_id'],
+            'code' => $validated['code'],
+            'qty' => $validated['qty']
+        ];
+        return $this->process($array);
     }
 
-    public function process($validated)
+    public function process($array)
     {
-        $orderId = $validated['order_id'];
-        $code = $validated['code'];
-        $qty = $validated['qty'];
-
-        return OrderItem::create([
-            'order_id' => $orderId,
-            'code' => $code,
-            'qty' => $qty
-        ]);
+        return OrderItem::create($array);
     }
 }
