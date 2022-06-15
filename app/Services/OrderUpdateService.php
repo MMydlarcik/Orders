@@ -10,18 +10,17 @@ class OrderUpdateService
     public function processRequest(OrderUpdateRequest $request)
     {
         $validated = $request->validated();
-        return $this->process($validated);
+        $array = [
+            'id' => $validated['id'],
+            'code' => $validated['code'],
+            'author_id' => $validated['author_id']
+        ];
+        return $this->process($array);
     }
 
-    public function process($validated)
+    public function process($array)
     {
-        $id = $validated['id'];
-        $code = $validated['code'];
-        $authorId = $validated['author_id'];
-        $order = Order::find($id);
-        return $order->update([
-            'code' => $code,
-            'author_id' => $authorId
-        ]);
+        $order = Order::find($array['id']);
+        return $order->update($array);
     }
 }
