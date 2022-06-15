@@ -27,7 +27,6 @@ class OrderCreateRequest extends FormRequest
         return [
             'code' => 'required|string|unique:order,code',
             'author_id' => 'required|integer',
-            'order_id' => 'required|integer'
         ];
     }
 }
