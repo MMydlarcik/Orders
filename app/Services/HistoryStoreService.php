@@ -10,19 +10,16 @@ class HistoryStoreService
     public function processRequest(HistoryCreateRequest $request)
     {
         $validated = $request->validated();
-        return $this->process($validated);
+        $array = [
+            'order_id' => $validated['order_id'],
+            'action' => $validated['action'],
+            'user_id' => $validated['user_id']
+        ];
+        return $this->process($array);
     }
 
-    public function process($validated)
+    public function process($array)
     {
-        $orderId = $validated['order_id'];
-        $action = $validated['action'];
-        $userId = $validated['user_id'];;
-
-        return OrderHistory::create([
-            'action' => $action,
-            'user_id' => $userId,
-            'order_id' => $orderId
-        ]);
+        return OrderHistory::create($array);
     }
 }
