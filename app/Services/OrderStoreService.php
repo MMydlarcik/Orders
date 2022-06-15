@@ -10,17 +10,15 @@ class OrderStoreService
     public function processRequest(OrderCreateRequest $request)
     {
         $validated = $request->validated();
-        return $this->process($validated);
+        $array = [
+            'code' => $validated['code'],
+            'author_id' => $validated['author_id']
+        ];
+        return $this->process($array);
     }
 
-    public function process($validated)
+    public function process($array)
     {
-        $code = $validated['code'];
-        $authorId = $validated['author_id'];
-
-        return Order::create([
-            'code' => $code,
-            'author_id' => $authorId
-        ]);
+        return Order::create($array);
     }
 }
